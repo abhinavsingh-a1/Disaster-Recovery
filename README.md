@@ -34,5 +34,5 @@ cross-AZ recovery of an EC2 server with continuous replication, point-in-time sn
 Includes helper scripts, cleanup automation and an architecture diagram.
 ```
 
-
+<img src="https://raw.githubusercontent.com/abhinavsingh-a1/Disaster-Recovery/ac06c5ee79a9664701fb4d969cbf37c0bc0bb480/aws-drs-terraform/docs/architecture.svg">
 
