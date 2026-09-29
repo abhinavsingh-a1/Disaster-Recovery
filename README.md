@@ -6,6 +6,9 @@ Terraform + AWS CLI lab for AWS Elastic Disaster Recovery:
 continuous replication of an Apache EC2 server across AZs, point-in-time recovery, drills, Elastic IP failover and failback,
 with architecture diagram and runbook.
 ```
+
+<img src="https://raw.githubusercontent.com/abhinavsingh-a1/Disaster-Recovery/c7dcef0b07b1a1f838a4aa6307ac81233a6b772a/aws-drs-terraform-v2/docs/architecture-v2.svg">
+
 # terraform-aws-dr (aws-multi-region-dr-terraform)
 
 ```
