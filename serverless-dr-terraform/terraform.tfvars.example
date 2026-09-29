@@ -1,0 +1,10 @@
+project_name     = "notes-dr"
+primary_region   = "us-east-1"
+dr_region        = "us-east-2"
+hosted_zone_name = "example.com"   # must already exist in Route 53
+api_subdomain    = "api"           # -> api.example.com
+stage_name       = "dev"
+table_name       = "notes-dr-notes"
+
+# Failover drill switch (see docs/RUNBOOK.md)
+simulate_primary_failure = false

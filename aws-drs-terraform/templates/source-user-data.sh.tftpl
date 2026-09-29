@@ -1,0 +1,29 @@
+#!/bin/bash
+# Bootstraps the demo "source server":
+#  - a tiny web page that represents the application data we want to protect
+#  - prerequisites + download of the AWS Replication Agent installer
+set -euxo pipefail
+
+dnf -y install httpd python3 make gcc perl tar gawk rpm
+dnf -y install "kernel-devel-$(uname -r)" || echo "kernel-devel for running kernel not found; the agent installer will retry"
+
+TOKEN=$(curl -sS -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 300")
+IID=$(curl -sS -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-id)
+AZ=$(curl -sS -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/placement/availability-zone)
+
+cat > /var/www/html/index.html <<HTML
+<!doctype html>
+<html><head><meta charset="utf-8"><title>${project_name}</title></head>
+<body style="font-family:system-ui,sans-serif;max-width:720px;margin:40px auto">
+<h1>${project_name} - application data</h1>
+<p>This page was written on the ORIGINAL source server <b>$IID</b> in <b>$AZ</b> at $(date -u).</p>
+<p>If the instance serving this page has a different ID, you are reading a copy recovered by AWS Elastic Disaster Recovery.</p>
+<p>Latest data marker: <a href="marker.txt">marker.txt</a></p>
+</body></html>
+HTML
+echo "initial marker $(date -u +%FT%TZ)" > /var/www/html/marker.txt
+systemctl enable --now httpd
+
+curl -fsSL -o /root/aws-replication-installer-init \
+  "https://aws-elastic-disaster-recovery-${region}.s3.${region}.amazonaws.com/latest/linux/aws-replication-installer-init"
+chmod +x /root/aws-replication-installer-init

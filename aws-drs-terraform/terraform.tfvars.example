@@ -1,0 +1,23 @@
+region       = "us-east-1"
+project_name = "drs-demo"
+
+# AZ letters per role (video: source a, staging b, recovery f)
+source_az_suffix   = "a"
+staging_az_suffix  = "b"
+recovery_az_suffix = "f"
+
+# Replication settings from the video
+replication_server_instance_type = "t3.small"
+staging_disk_type                = "GP2"
+bandwidth_throttling_mbps        = 0
+pit_retention_days               = 7
+
+# Launch settings from the video
+recovery_instance_type = "c5.large"
+
+# Access
+http_ingress_cidrs = ["0.0.0.0/0"]
+ssh_ingress_cidrs  = []   # e.g. ["203.0.113.10/32"]
+# key_name         = "my-keypair"
+
+create_failback_user = false
