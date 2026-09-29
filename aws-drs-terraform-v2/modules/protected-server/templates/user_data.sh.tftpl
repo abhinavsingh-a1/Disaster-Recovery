@@ -1,0 +1,34 @@
+#!/bin/bash
+set -euxo pipefail
+exec > /var/log/user-data.log 2>&1
+
+# ---- Application: Apache test page + health endpoint ----
+dnf install -y httpd
+TOKEN=$(curl -sX PUT http://169.254.169.254/latest/api/token -H "X-aws-ec2-metadata-token-ttl-seconds: 300")
+AZ=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/placement/availability-zone)
+cat > /var/www/html/index.html <<HTML
+<html><body style="font-family:sans-serif">
+<h1>${server_name}</h1>
+<p>Built in AZ <b>$AZ</b> on $(date -u +%FT%TZ).</p>
+<p>If this page is served from the DR load balancer, AWS DRS recovery worked:
+the disk content (including this file) was replicated.</p>
+</body></html>
+HTML
+echo OK > /var/www/html/health.html
+systemctl enable --now httpd
+
+%{ if install_agent ~}
+# ---- AWS Replication Agent (authenticates with the instance role) ----
+cd /tmp
+curl -fsSL -o aws-replication-installer-init \
+  "https://aws-elastic-disaster-recovery-${drs_region}.s3.${drs_region}.amazonaws.com/latest/linux/aws-replication-installer-init"
+chmod +x aws-replication-installer-init
+for attempt in 1 2 3 4 5; do
+  if ./aws-replication-installer-init --region ${drs_region} --no-prompt; then
+    echo "DRS agent installed (attempt $attempt)"
+    break
+  fi
+  echo "Agent install attempt $attempt failed; retrying in 60s"
+  sleep 60
+done
+%{ endif ~}

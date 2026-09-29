@@ -1,0 +1,24 @@
+# Checks skipped on purpose, with the reason. Revisit for production.
+framework:
+  - terraform
+  - github_actions
+skip-check:
+  - CKV_AWS_2      # ALB HTTP listener: HTTPS enabled only when a certificate ARN is provided
+  - CKV2_AWS_20    # HTTP->HTTPS redirect: same as above
+  - CKV_AWS_91     # ALB access logs: add an S3 log bucket for production
+  - CKV_AWS_150    # ALB deletion protection: lab stack is destroyed often
+  - CKV2_AWS_28    # WAF on public ALB: out of scope for the DR demo
+  - CKV_AWS_26     # SNS encryption: CMK needs extra key-policy grants for CloudWatch/EventBridge
+  - CKV_AWS_116    # Lambda DLQ: functions are idempotent and scheduled
+  - CKV_AWS_117    # Lambda in VPC: they only call AWS APIs
+  - CKV_AWS_173    # Lambda env encryption: no secrets in environment
+  - CKV_AWS_272    # Lambda code signing
+  - CKV_AWS_50     # X-Ray tracing
+  - CKV_AWS_115    # Lambda reserved concurrency
+  - CKV_AWS_118    # RDS enhanced monitoring: optional cost
+  - CKV_AWS_353    # RDS performance insights: optional cost
+  - CKV_AWS_144    # State bucket cross-region replication
+  - CKV_AWS_18     # State bucket access logging
+  - CKV_AWS_145    # State bucket CMK (SSE-KMS with aws/s3 used)
+  - CKV2_AWS_62    # State bucket event notifications
+  - CKV_AWS_274    # Bootstrap deploy role uses AdministratorAccess (documented)

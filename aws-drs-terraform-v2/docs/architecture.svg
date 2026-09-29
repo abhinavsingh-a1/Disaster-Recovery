@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" font-family="Helvetica, Arial, sans-serif" font-size="12">
+  <defs>
+    <marker id="k" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#333"/></marker>
+    <marker id="r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/></marker>
+    <marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e8449"/></marker>
+    <marker id="b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f77b4"/></marker>
+    <marker id="p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#8e44ad"/></marker>
+    <marker id="o" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d35400"/></marker>
+  </defs>
+  <rect width="1200" height="900" fill="#fff"/>
+  <text x="600" y="28" text-anchor="middle" font-size="18" font-weight="bold" fill="#222">aws-drs-terraform - cross-region disaster recovery platform</text>
+
+  <!-- Users + Route 53 -->
+  <rect x="530" y="45" width="140" height="42" rx="8" fill="#f4f6f7" stroke="#566573"/>
+  <text x="600" y="71" text-anchor="middle" font-weight="bold">Users</text>
+  <line x1="600" y1="87" x2="600" y2="113" stroke="#333" stroke-width="2" marker-end="url(#k)"/>
+  <rect x="420" y="115" width="360" height="62" rx="8" fill="#f5eef8" stroke="#8e44ad"/>
+  <text x="600" y="137" text-anchor="middle" font-weight="bold">Route 53 failover record (optional)</text>
+  <text x="600" y="155" text-anchor="middle" font-size="11">health check on prod ALB, alarm (us-east-1)</text>
+  <text x="600" y="170" text-anchor="middle" font-size="11">-&gt; SNS -&gt; optional auto-failover Lambda</text>
+  <path d="M420,146 L155,146 L155,258" fill="none" stroke="#333" stroke-width="2" marker-end="url(#k)"/>
+  <text x="290" y="140" text-anchor="middle" font-size="11">PRIMARY (health checked)</text>
+  <path d="M780,146 L1020,146 L1020,258" fill="none" stroke="#c0392b" stroke-width="2" stroke-dasharray="7,4" marker-end="url(#r)"/>
+  <text x="900" y="140" text-anchor="middle" font-size="11" fill="#c0392b">SECONDARY (after failover)</text>
+
+  <!-- ===== Primary region ===== -->
+  <rect x="20" y="200" width="560" height="530" rx="10" fill="none" stroke="#232f3e" stroke-width="2"/>
+  <text x="32" y="220" font-weight="bold">Primary Region (default us-east-1)</text>
+  <rect x="35" y="232" width="530" height="370" rx="8" fill="none" stroke="#8c4fff" stroke-width="1.5"/>
+  <text x="45" y="248" fill="#8c4fff" font-size="11" font-weight="bold">Production VPC 10.20.0.0/16 (2 AZs)</text>
+
+  <rect x="60" y="260" width="190" height="50" rx="6" fill="#fff" stroke="#8c4fff"/>
+  <text x="155" y="281" text-anchor="middle" font-weight="bold">Production ALB</text>
+  <text x="155" y="298" text-anchor="middle" font-size="11">public subnets, HTTP/HTTPS</text>
+  <rect x="290" y="260" width="255" height="50" rx="6" fill="#fff" stroke="#7f8c8d"/>
+  <text x="417" y="281" text-anchor="middle" font-weight="bold">NAT gateway</text>
+  <text x="417" y="298" text-anchor="middle" font-size="11">agent -&gt; DRS API + installer</text>
+
+  <rect x="60" y="340" width="240" height="110" rx="6" fill="#fff" stroke="#ed7100" stroke-width="1.5"/>
+  <text x="180" y="360" text-anchor="middle" font-weight="bold">Protected servers (for_each)</text>
+  <text x="180" y="378" text-anchor="middle" font-size="11">private app subnets, AL2023 + Apache</text>
+  <text x="180" y="394" text-anchor="middle" font-size="11" fill="#c0392b" font-weight="bold">AWS Replication Agent</text>
+  <text x="180" y="410" text-anchor="middle" font-size="11">IAM role (no access keys), IMDSv2</text>
+  <text x="180" y="426" text-anchor="middle" font-size="11">tag Backup=true</text>
+  <line x1="155" y1="310" x2="155" y2="338" stroke="#333" stroke-width="1.5" marker-end="url(#k)"/>
+
+  <rect x="320" y="340" width="225" height="110" rx="6" fill="#fff" stroke="#1f77b4" stroke-dasharray="5,3"/>
+  <text x="432" y="360" text-anchor="middle" font-weight="bold">Failback staging area</text>
+  <text x="432" y="378" text-anchor="middle" font-size="11">DRS template (primary region)</text>
+  <text x="432" y="394" text-anchor="middle" font-size="11">used only during failback</text>
+  <text x="432" y="410" text-anchor="middle" font-size="11">TCP 1500 from DR VPC</text>
+
+  <rect x="60" y="480" width="240" height="100" rx="6" fill="#fff" stroke="#b7950b"/>
+  <text x="180" y="500" text-anchor="middle" font-weight="bold">Secrets Manager + private DNS</text>
+  <text x="180" y="518" text-anchor="middle" font-size="11">DB secret replicated to DR region</text>
+  <text x="180" y="534" text-anchor="middle" font-size="11">db.&lt;project&gt;.internal (CNAME)</text>
+  <text x="180" y="550" text-anchor="middle" font-size="11">zone shared by both VPCs</text>
+
+  <rect x="320" y="480" width="225" height="100" rx="6" fill="#fff" stroke="#3f48cc" stroke-width="1.5"/>
+  <text x="432" y="500" text-anchor="middle" font-weight="bold">RDS PostgreSQL primary</text>
+  <text x="432" y="518" text-anchor="middle" font-size="11">Multi-AZ, CMK encrypted</text>
+  <text x="432" y="534" text-anchor="middle" font-size="11">private DB subnets</text>
+
+  <rect x="40" y="620" width="150" height="80" rx="6" fill="#fef9e7" stroke="#b7950b"/>
+  <text x="115" y="645" text-anchor="middle" font-weight="bold">KMS CMK</text>
+  <text x="115" y="663" text-anchor="middle" font-size="11">rotation on</text>
+  <rect x="205" y="620" width="165" height="80" rx="6" fill="#fef9e7" stroke="#b7950b"/>
+  <text x="287" y="645" text-anchor="middle" font-weight="bold">CloudWatch + SNS</text>
+  <text x="287" y="663" text-anchor="middle" font-size="11">unhealthy hosts, 5xx</text>
+  <rect x="385" y="620" width="180" height="80" rx="6" fill="#fef9e7" stroke="#d35400"/>
+  <text x="475" y="645" text-anchor="middle" font-weight="bold">AWS Backup vault</text>
+  <text x="475" y="663" text-anchor="middle" font-size="11">daily, Vault Lock</text>
+
+  <!-- ===== DR region ===== -->
+  <rect x="620" y="200" width="560" height="530" rx="10" fill="none" stroke="#232f3e" stroke-width="2"/>
+  <text x="632" y="220" font-weight="bold">DR Region (default us-east-2)</text>
+  <rect x="635" y="232" width="530" height="370" rx="8" fill="none" stroke="#8c4fff" stroke-width="1.5"/>
+  <text x="645" y="248" fill="#8c4fff" font-size="11" font-weight="bold">Recovery VPC 10.30.0.0/16 (2 AZs)</text>
+
+  <rect x="660" y="260" width="220" height="50" rx="6" fill="#fff" stroke="#7f8c8d"/>
+  <text x="770" y="281" text-anchor="middle" font-weight="bold">NAT or VPC endpoints</text>
+  <text x="770" y="298" text-anchor="middle" font-size="11">DRS, EC2, S3, SSM, STS...</text>
+  <rect x="900" y="260" width="245" height="50" rx="6" fill="#fff" stroke="#8c4fff"/>
+  <text x="1022" y="281" text-anchor="middle" font-weight="bold">DR ALB</text>
+  <text x="1022" y="298" text-anchor="middle" font-size="11">empty until recovery registers targets</text>
+
+  <rect x="660" y="340" width="240" height="110" rx="6" fill="#fdf2e9" stroke="#ed7100" stroke-width="1.5"/>
+  <text x="780" y="360" text-anchor="middle" font-weight="bold">DRS staging area</text>
+  <text x="780" y="378" text-anchor="middle" font-size="11">replication server t3.small</text>
+  <text x="780" y="394" text-anchor="middle" font-size="11">GP3 staging disks, CMK</text>
+  <text x="780" y="410" text-anchor="middle" font-size="11">private IP data plane</text>
+  <text x="780" y="426" text-anchor="middle" font-size="11">SG: TCP 1500 from prod VPC</text>
+
+  <rect x="920" y="340" width="225" height="110" rx="6" fill="#fff" stroke="#ed7100" stroke-width="2" stroke-dasharray="5,3"/>
+  <text x="1032" y="360" text-anchor="middle" font-weight="bold">Drill / recovery instances</text>
+  <text x="1032" y="378" text-anchor="middle" font-size="11">launched by runbook only</text>
+  <text x="1032" y="394" text-anchor="middle" font-size="11">private subnets, IMDSv2</text>
+  <text x="1032" y="410" text-anchor="middle" font-size="11">right-sizing off, SSM agent</text>
+  <line x1="1032" y1="340" x2="1032" y2="312" stroke="#1f77b4" stroke-width="2" marker-end="url(#b)"/>
+  <text x="1040" y="330" font-size="10" fill="#1f77b4">(4) register</text>
+
+  <rect x="660" y="480" width="240" height="100" rx="6" fill="#fff" stroke="#3f48cc" stroke-width="1.5"/>
+  <text x="780" y="500" text-anchor="middle" font-weight="bold">RDS cross-region read replica</text>
+  <text x="780" y="518" text-anchor="middle" font-size="11">promoted by FailoverDatabase</text>
+  <text x="780" y="534" text-anchor="middle" font-size="11">runbook, DNS repointed</text>
+
+  <rect x="920" y="480" width="225" height="100" rx="6" fill="#eafaf1" stroke="#1e8449" stroke-width="1.5"/>
+  <text x="1032" y="500" text-anchor="middle" font-weight="bold">SSM Automation runbooks</text>
+  <text x="1032" y="518" text-anchor="middle" font-size="11">PrepareLaunchSettings, Recover</text>
+  <text x="1032" y="534" text-anchor="middle" font-size="11">(drill|recovery, point in time)</text>
+  <text x="1032" y="550" text-anchor="middle" font-size="11">FailoverDatabase, Failback,</text>
+  <text x="1032" y="566" text-anchor="middle" font-size="11">TerminateDrills</text>
+  <line x1="1032" y1="480" x2="1032" y2="452" stroke="#1e8449" stroke-width="2" marker-end="url(#g)"/>
+  <text x="1040" y="472" font-size="10" fill="#1e8449">(3) launch</text>
+
+  <rect x="640" y="620" width="160" height="80" rx="6" fill="#fef9e7" stroke="#1e8449"/>
+  <text x="720" y="645" text-anchor="middle" font-weight="bold">PIT snapshots</text>
+  <text x="720" y="663" text-anchor="middle" font-size="11">10 min / hourly / daily</text>
+  <text x="720" y="679" text-anchor="middle" font-size="11">7 days default</text>
+  <rect x="815" y="620" width="175" height="80" rx="6" fill="#fef9e7" stroke="#d35400"/>
+  <text x="902" y="645" text-anchor="middle" font-weight="bold">DR Backup vault</text>
+  <text x="902" y="663" text-anchor="middle" font-size="11">copies, Vault Lock</text>
+  <rect x="1005" y="620" width="160" height="80" rx="6" fill="#fef9e7" stroke="#b7950b"/>
+  <text x="1085" y="642" text-anchor="middle" font-weight="bold">Monitoring</text>
+  <text x="1085" y="660" text-anchor="middle" font-size="11">Lambda metrics (5 min)</text>
+  <text x="1085" y="676" text-anchor="middle" font-size="11">lag / unhealthy alarms</text>
+  <text x="1085" y="692" text-anchor="middle" font-size="11">DRS events -&gt; SNS</text>
+
+  <!-- flows -->
+  <path d="M180,340 L180,325 L780,325 L780,338" fill="none" stroke="#c0392b" stroke-width="2.5" marker-end="url(#r)"/>
+  <text x="480" y="321" text-anchor="middle" font-size="11" fill="#c0392b" font-weight="bold">(1) continuous block replication, TCP 1500 over VPC peering</text>
+  <path d="M660,420 L645,420 L645,618" fill="none" stroke="#1e8449" stroke-width="2" marker-end="url(#g)"/>
+  <text x="650" y="600" font-size="10" fill="#1e8449" transform="rotate(-90 650 600)">(2) PIT</text>
+  <path d="M940,450 L940,466 L432,466 L432,452" fill="none" stroke="#1f77b4" stroke-width="2" stroke-dasharray="4,3" marker-end="url(#b)"/>
+  <text x="600" y="462" text-anchor="middle" font-size="10" fill="#1f77b4" font-weight="bold">(6) failback: reversed replication</text>
+  <line x1="545" y1="545" x2="658" y2="545" stroke="#3f48cc" stroke-width="2" marker-end="url(#p)"/>
+  <text x="602" y="538" text-anchor="middle" font-size="10" fill="#3f48cc">(5) async</text>
+  <path d="M475,700 L475,715 L902,715 L902,702" fill="none" stroke="#d35400" stroke-width="2" marker-end="url(#o)"/>
+  <text x="690" y="711" text-anchor="middle" font-size="10" fill="#d35400" font-weight="bold">(7) cross-region backup copy</text>
+
+  <!-- bottom -->
+  <rect x="20" y="750" width="560" height="80" rx="8" fill="#f4f6f7" stroke="#566573"/>
+  <text x="300" y="775" text-anchor="middle" font-weight="bold">GitHub Actions (OIDC, no stored keys)</text>
+  <text x="300" y="795" text-anchor="middle" font-size="11">ci: fmt, validate, terraform test, tflint, checkov, shellcheck</text>
+  <text x="300" y="812" text-anchor="middle" font-size="11">deploy: plan on PR, approved apply on main | dr-drill: monthly report</text>
+  <rect x="620" y="750" width="560" height="80" rx="8" fill="#f4f6f7" stroke="#566573"/>
+  <text x="900" y="775" text-anchor="middle" font-weight="bold">Remote state (bootstrap/)</text>
+  <text x="900" y="795" text-anchor="middle" font-size="11">S3 bucket: versioned, encrypted, TLS-only, public access blocked</text>
+  <text x="900" y="812" text-anchor="middle" font-size="11">native S3 lockfile (Terraform &gt;= 1.10)</text>
+
+  <text x="20" y="860" font-size="11"><tspan font-weight="bold">Flow: </tspan>(1) agent replicates disks  (2) point-in-time snapshots  (3) runbook launches drill/recovery instances  (4) registers them on the DR ALB  (5) DB replica</text>
+  <text x="20" y="878" font-size="11">follows primary; promoted on failover  (6) failback via reversed replication  (7) immutable backup copies. Dashed boxes = on-demand resources. cross-az mode: both VPCs in one Region.</text>
+</svg>
