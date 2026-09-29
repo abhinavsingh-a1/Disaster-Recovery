@@ -26,6 +26,8 @@ API Gateway + Lambda in two regions, DynamoDB global table replication, Route 53
 replication-lag alarms, PITR backups, and a scripted failover drill.
 ```
 
+<img src="https://raw.githubusercontent.com/abhinavsingh-a1/Disaster-Recovery/01a295c776d08beecc197121a7078faa8016b78b/serverless-dr-terraform/docs/architecture.svg">
+
 # aws-drs-terraform (aws-drs-terraform-lab)
 
 ```
