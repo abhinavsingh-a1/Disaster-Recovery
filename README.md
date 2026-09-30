@@ -17,6 +17,7 @@ One variable switches between the four DR strategies (backup & restore, pilot li
 Includes a failover runbook script and an architecture diagram.
 ```
 
+<img src="https://raw.githubusercontent.com/abhinavsingh-a1/Disaster-Recovery/b974a93b7358592706fa02988f4407ffdd76fc00/aws-multi-region-dr-terraform/diagrams/architecture.svg">
 
 # serverless-dr-terraform (serverless-dr-active-active-terraform)
 
