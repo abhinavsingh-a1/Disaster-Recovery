@@ -1,0 +1,16 @@
+# Terraform
+.terraform/
+.terraform.lock.hcl.bak
+*.tfstate
+*.tfstate.*
+crash.log
+*.tfplan
+.build/
+
+# Local configuration (may contain account-specific values)
+terraform.tfvars
+backend.hcl
+
+# Python
+__pycache__/
+*.pyc

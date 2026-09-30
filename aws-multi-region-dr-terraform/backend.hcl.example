@@ -1,0 +1,6 @@
+# Output of `terraform -chdir=bootstrap output -raw backend_config`
+bucket       = "dr-demo-tfstate-123456789012"
+key          = "aws-multi-region-dr/terraform.tfstate"
+region       = "eu-west-1"
+encrypt      = true
+use_lockfile = true

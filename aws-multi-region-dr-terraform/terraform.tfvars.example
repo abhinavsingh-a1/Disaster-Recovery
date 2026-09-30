@@ -1,0 +1,28 @@
+project_name   = "dr-demo"
+primary_region = "eu-central-1"
+dr_region      = "eu-west-1"
+
+# backup_restore | pilot_light | warm_standby | multi_site
+dr_strategy = "warm_standby"
+
+# true = the failover Lambda promotes the DR region by itself.
+# Start with false (it only reports what it would do) until you trust it.
+auto_failover_enabled = false
+
+# Flip to true after a failover so Terraform keeps the DR site at production size
+dr_activate = false
+
+primary_capacity = {
+  min     = 2
+  desired = 2
+  max     = 6
+}
+
+# Optional but recommended: enables Route 53 failover records and HTTPS.
+# hosted_zone_id = "Z0123456789ABCDEFGHIJ"
+# domain_name    = "app.example.com"
+
+# alert_email = "you@example.com"
+
+enable_vault_lock        = false
+enable_chaos_experiments = true

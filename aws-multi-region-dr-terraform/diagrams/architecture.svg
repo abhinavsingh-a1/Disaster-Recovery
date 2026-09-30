@@ -1,0 +1,188 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 965" width="1400" height="965" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#37475a"/></marker>
+    <marker id="arrO" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#b5651d"/></marker>
+    <marker id="arrG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2e7d4f"/></marker>
+    <marker id="arrR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#b3261e"/></marker>
+    <marker id="arrP" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7b4fa8"/></marker>
+  </defs>
+  <rect width="1400" height="965" fill="#ffffff"/>
+  <text x="700" y="36" text-anchor="middle" font-size="22" font-weight="700" fill="#1f2d3d">aws-multi-region-dr-terraform: architecture</text>
+
+  <!-- CI -->
+  <rect x="30" y="58" width="350" height="142" rx="8" fill="#f2f4f7" stroke="#6b7785"/>
+  <text x="46" y="82" font-size="14" font-weight="700" fill="#1f2d3d">GitHub Actions CI (every push / PR)</text>
+  <text x="46" y="108" font-size="12" fill="#37475a">terraform fmt, validate, test (mocked AWS)</text>
+  <text x="46" y="130" font-size="12" fill="#37475a">TFLint, Checkov to code scanning</text>
+  <text x="46" y="152" font-size="12" fill="#37475a">Python unit tests (app + failover Lambda)</text>
+  <text x="46" y="174" font-size="12" fill="#37475a">ShellCheck on runbook scripts</text>
+
+  <!-- Users + Route 53 -->
+  <rect x="620" y="58" width="160" height="42" rx="21" fill="#f2f4f7" stroke="#37475a"/>
+  <text x="700" y="84" text-anchor="middle" font-size="15" fill="#1f2d3d">Users (HTTPS)</text>
+  <line x1="700" y1="100" x2="700" y2="128" stroke="#37475a" stroke-width="2" marker-end="url(#arr)"/>
+  <rect x="560" y="130" width="280" height="56" rx="6" fill="#f3ecfb" stroke="#7b4fa8" stroke-width="1.5"/>
+  <text x="700" y="153" text-anchor="middle" font-size="15" font-weight="700" fill="#4b2a70">Amazon Route 53</text>
+  <text x="700" y="173" text-anchor="middle" font-size="11.5" fill="#4b2a70">failover / latency records + health checks</text>
+
+  <!-- us-east-1 control box -->
+  <rect x="1000" y="58" width="370" height="142" rx="8" fill="#fbeeee" stroke="#b3261e"/>
+  <text x="1016" y="80" font-size="13" font-weight="700" fill="#7a1a14">us-east-1 (Route 53 metrics live here)</text>
+  <rect x="1015" y="90" width="170" height="52" rx="5" fill="#ffffff" stroke="#b3261e"/>
+  <text x="1100" y="112" text-anchor="middle" font-size="12" font-weight="700" fill="#7a1a14">CloudWatch alarm</text>
+  <text x="1100" y="129" text-anchor="middle" font-size="11" fill="#7a1a14">primary-site-down</text>
+  <line x1="1185" y1="116" x2="1198" y2="116" stroke="#b3261e" stroke-width="2" marker-end="url(#arrR)"/>
+  <rect x="1200" y="90" width="155" height="52" rx="5" fill="#ffffff" stroke="#b3261e"/>
+  <text x="1277" y="112" text-anchor="middle" font-size="12" font-weight="700" fill="#7a1a14">SNS topic</text>
+  <text x="1277" y="129" text-anchor="middle" font-size="11" fill="#7a1a14">e-mail + Lambda</text>
+  <text x="1016" y="172" font-size="11.5" fill="#7a1a14">3 failed minutes of the primary health check</text>
+  <text x="1016" y="190" font-size="11.5" fill="#7a1a14">notifies people and invokes the failover Lambda</text>
+
+  <!-- ===================== PRIMARY REGION ===================== -->
+  <rect x="30" y="228" width="570" height="550" rx="10" fill="#eef4fb" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="50" y="254" font-size="15" font-weight="700" fill="#274b7a">Primary region (eu-central-1)</text>
+  <rect x="50" y="266" width="530" height="324" rx="6" fill="none" stroke="#4a6fa5" stroke-dasharray="5 4"/>
+  <text x="570" y="584" text-anchor="end" font-size="11" fill="#4a6fa5">VPC 10.10.0.0/16, 2 AZs</text>
+
+  <rect x="70" y="280" width="490" height="64" rx="5" fill="#ffffff" stroke="#9aa5b1"/>
+  <text x="82" y="296" font-size="11" fill="#6b7785">Public subnets</text>
+  <rect x="190" y="302" width="180" height="36" rx="5" fill="#ffffff" stroke="#37475a"/>
+  <text x="280" y="325" text-anchor="middle" font-size="12.5" fill="#1f2d3d">ALB (HTTPS, ACM cert)</text>
+  <rect x="420" y="302" width="120" height="36" rx="5" fill="#ffffff" stroke="#37475a"/>
+  <text x="480" y="325" text-anchor="middle" font-size="12.5" fill="#1f2d3d">NAT gateway</text>
+  <line x1="280" y1="338" x2="280" y2="366" stroke="#37475a" stroke-width="2" marker-end="url(#arr)"/>
+
+  <rect x="70" y="368" width="490" height="86" rx="5" fill="#ffffff" stroke="#9aa5b1"/>
+  <text x="82" y="384" font-size="11" fill="#6b7785">Private app subnets, Auto Scaling group</text>
+  <rect x="100" y="396" width="60" height="34" rx="4" fill="#ffe8cc" stroke="#b5651d"/>
+  <text x="130" y="418" text-anchor="middle" font-size="12">EC2</text>
+  <rect x="170" y="396" width="60" height="34" rx="4" fill="#ffe8cc" stroke="#b5651d"/>
+  <text x="200" y="418" text-anchor="middle" font-size="12">EC2</text>
+  <text x="548" y="410" text-anchor="end" font-size="11.5" fill="#37475a">notes app, min 2 / max 6</text>
+  <text x="548" y="426" text-anchor="end" font-size="11.5" fill="#37475a">scales on CPU 50%</text>
+  <line x1="280" y1="454" x2="280" y2="500" stroke="#37475a" stroke-width="2" marker-end="url(#arr)"/>
+
+  <rect x="70" y="476" width="490" height="90" rx="5" fill="#ffffff" stroke="#9aa5b1"/>
+  <text x="548" y="492" text-anchor="end" font-size="11" fill="#6b7785">Isolated DB subnets</text>
+  <rect x="170" y="502" width="230" height="50" rx="5" fill="#e3f1e6" stroke="#2e7d4f"/>
+  <text x="285" y="523" text-anchor="middle" font-size="13" font-weight="700" fill="#1e5a38">Aurora MySQL writer</text>
+  <text x="285" y="541" text-anchor="middle" font-size="11" fill="#1e5a38">KMS encrypted</text>
+
+  <rect x="50" y="605" width="260" height="67" rx="6" fill="#fbeeee" stroke="#b3261e"/>
+  <text x="180" y="629" text-anchor="middle" font-size="12.5" font-weight="700" fill="#7a1a14">AWS FIS experiments</text>
+  <text x="180" y="648" text-anchor="middle" font-size="11" fill="#7a1a14">subnet outage, terminate instance,</text>
+  <text x="180" y="663" text-anchor="middle" font-size="11" fill="#7a1a14">CPU stress</text>
+  <rect x="330" y="605" width="250" height="67" rx="6" fill="#eef0fb" stroke="#4a55a5"/>
+  <text x="455" y="632" text-anchor="middle" font-size="12.5" font-weight="700" fill="#2c3480">Secrets Manager</text>
+  <text x="455" y="651" text-anchor="middle" font-size="11" fill="#2c3480">DB credentials</text>
+
+  <rect x="50" y="688" width="260" height="70" rx="6" fill="#f2f4f7" stroke="#6b7785"/>
+  <text x="180" y="712" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1f2d3d">CloudWatch + SNS</text>
+  <text x="180" y="731" text-anchor="middle" font-size="11" fill="#37475a">5xx, unhealthy hosts, backup failures,</text>
+  <text x="180" y="746" text-anchor="middle" font-size="11" fill="#37475a">two-region dashboard</text>
+  <rect x="330" y="688" width="250" height="70" rx="6" fill="#fff8e1" stroke="#a88a1d"/>
+  <text x="455" y="714" text-anchor="middle" font-size="12.5" font-weight="700" fill="#6b5710">AWS Backup vault</text>
+  <text x="455" y="733" text-anchor="middle" font-size="11" fill="#6b5710">daily, tag Backup=true</text>
+
+  <!-- ======================= DR REGION ======================= -->
+  <rect x="780" y="228" width="570" height="550" rx="10" fill="#fdf2e9" stroke="#b5651d" stroke-width="2"/>
+  <text x="800" y="254" font-size="15" font-weight="700" fill="#7a4212">DR region (eu-west-1)</text>
+  <rect x="800" y="266" width="530" height="324" rx="6" fill="none" stroke="#b5651d" stroke-dasharray="5 4"/>
+  <text x="812" y="584" font-size="11" fill="#b5651d">VPC 10.20.0.0/16, 2 AZs</text>
+
+  <rect x="820" y="280" width="490" height="64" rx="5" fill="#ffffff" stroke="#9aa5b1"/>
+  <text x="832" y="296" font-size="11" fill="#6b7785">Public subnets</text>
+  <rect x="940" y="302" width="180" height="36" rx="5" fill="#ffffff" stroke="#37475a"/>
+  <text x="1030" y="325" text-anchor="middle" font-size="12.5" fill="#1f2d3d">ALB (HTTPS, ACM cert)</text>
+  <rect x="1170" y="302" width="120" height="36" rx="5" fill="#ffffff" stroke="#37475a"/>
+  <text x="1230" y="325" text-anchor="middle" font-size="12.5" fill="#1f2d3d">NAT gateway</text>
+  <line x1="1030" y1="338" x2="1030" y2="366" stroke="#37475a" stroke-width="2" marker-end="url(#arr)"/>
+
+  <rect x="820" y="368" width="490" height="86" rx="5" fill="#ffffff" stroke="#9aa5b1"/>
+  <text x="832" y="384" font-size="11" fill="#6b7785">Private app subnets, Auto Scaling group</text>
+  <rect x="850" y="396" width="60" height="34" rx="4" fill="#ffe8cc" stroke="#b5651d"/>
+  <text x="880" y="418" text-anchor="middle" font-size="12">EC2</text>
+  <rect x="920" y="396" width="60" height="34" rx="4" fill="none" stroke="#b5651d" stroke-dasharray="4 3"/>
+  <text x="950" y="418" text-anchor="middle" font-size="12" fill="#b5651d">EC2</text>
+  <text x="1298" y="410" text-anchor="end" font-size="11.5" fill="#37475a">size set by dr_strategy,</text>
+  <text x="1298" y="426" text-anchor="end" font-size="11.5" fill="#37475a">scaled out on failover</text>
+  <line x1="1030" y1="454" x2="1030" y2="500" stroke="#37475a" stroke-width="2" marker-end="url(#arr)"/>
+
+  <rect x="820" y="476" width="490" height="90" rx="5" fill="#ffffff" stroke="#9aa5b1"/>
+  <text x="832" y="492" font-size="11" fill="#6b7785">Isolated DB subnets</text>
+  <rect x="920" y="502" width="230" height="50" rx="5" fill="#e3f1e6" stroke="#2e7d4f"/>
+  <text x="1035" y="523" text-anchor="middle" font-size="13" font-weight="700" fill="#1e5a38">Aurora secondary</text>
+  <text x="1035" y="541" text-anchor="middle" font-size="11" fill="#1e5a38">read-only until promoted</text>
+
+  <rect x="800" y="605" width="260" height="67" rx="6" fill="#eef0fb" stroke="#4a55a5"/>
+  <text x="930" y="632" text-anchor="middle" font-size="12.5" font-weight="700" fill="#2c3480">Secrets Manager replica</text>
+  <text x="930" y="651" text-anchor="middle" font-size="11" fill="#2c3480">readable if primary is down</text>
+  <rect x="1080" y="605" width="250" height="67" rx="6" fill="#fbeeee" stroke="#b3261e" stroke-width="1.5"/>
+  <text x="1205" y="629" text-anchor="middle" font-size="12.5" font-weight="700" fill="#7a1a14">Failover Lambda</text>
+  <text x="1205" y="648" text-anchor="middle" font-size="11" fill="#7a1a14">re-check, promote Aurora,</text>
+  <text x="1205" y="663" text-anchor="middle" font-size="11" fill="#7a1a14">scale web tier (or dry run)</text>
+
+  <rect x="800" y="688" width="260" height="70" rx="6" fill="#fff8e1" stroke="#a88a1d"/>
+  <text x="930" y="714" text-anchor="middle" font-size="12.5" font-weight="700" fill="#6b5710">Backup copy vault</text>
+  <text x="930" y="733" text-anchor="middle" font-size="11" fill="#6b5710">optional Vault Lock (WORM)</text>
+  <rect x="1080" y="688" width="250" height="70" rx="6" fill="#f2f4f7" stroke="#6b7785"/>
+  <text x="1205" y="712" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1f2d3d">CloudWatch + SNS</text>
+  <text x="1205" y="731" text-anchor="middle" font-size="11" fill="#37475a">replication lag (live RPO),</text>
+  <text x="1205" y="746" text-anchor="middle" font-size="11" fill="#37475a">5xx, unhealthy hosts</text>
+
+  <!-- ================== cross-region flows ================== -->
+  <line x1="400" y1="527" x2="918" y2="527" stroke="#2e7d4f" stroke-width="2.5" marker-end="url(#arrG)"/>
+  <text x="690" y="470" text-anchor="middle" font-size="12" font-weight="700" fill="#1e5a38">Aurora Global</text>
+  <text x="690" y="485" text-anchor="middle" font-size="12" font-weight="700" fill="#1e5a38">Database</text>
+  <text x="690" y="501" text-anchor="middle" font-size="11" fill="#1e5a38">storage replication</text>
+  <text x="690" y="516" text-anchor="middle" font-size="11" fill="#1e5a38">(typically &lt; 1 s)</text>
+
+  <line x1="580" y1="638" x2="798" y2="638" stroke="#4a55a5" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arr)"/>
+  <text x="690" y="630" text-anchor="middle" font-size="11" fill="#2c3480">secret replica</text>
+
+  <line x1="580" y1="722" x2="798" y2="722" stroke="#a88a1d" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#arr)"/>
+  <text x="690" y="714" text-anchor="middle" font-size="11" fill="#6b5710">daily cross-region copy</text>
+
+  <!-- Lambda actions -->
+  <line x1="1130" y1="605" x2="1130" y2="555" stroke="#b3261e" stroke-width="2" stroke-dasharray="5 3" marker-end="url(#arrR)"/>
+  <text x="1124" y="596" text-anchor="end" font-size="11" fill="#b3261e">promote</text>
+  <polyline points="1320,605 1320,411 1312,411" fill="none" stroke="#b3261e" stroke-width="2" stroke-dasharray="5 3" marker-end="url(#arrR)"/>
+  <text x="1314" y="596" text-anchor="end" font-size="11" fill="#b3261e">scale out</text>
+
+  <!-- Route 53 -> ALBs, health check -> alarm, SNS -> Lambda (drawn last, on top) -->
+  <line x1="620" y1="186" x2="282" y2="300" stroke="#37475a" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="440" y="210" text-anchor="end" font-size="12" fill="#37475a">primary (health-checked)</text>
+  <line x1="780" y1="186" x2="1028" y2="300" stroke="#b5651d" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#arrO)"/>
+  <text x="900" y="212" font-size="12" fill="#b5651d">secondary on failover, active in multi_site</text>
+  <line x1="840" y1="150" x2="1012" y2="118" stroke="#7b4fa8" stroke-width="1.8" stroke-dasharray="5 3" marker-end="url(#arrP)"/>
+  <text x="918" y="126" text-anchor="middle" font-size="10.5" fill="#7b4fa8">health metric</text>
+  <polyline points="1340,142 1340,640 1332,640" fill="none" stroke="#b3261e" stroke-width="2" marker-end="url(#arrR)"/>
+
+  <!-- =================== strategy strip =================== -->
+  <text x="30" y="806" font-size="14" font-weight="700" fill="#1f2d3d">The dr_strategy variable decides what runs in the DR region</text>
+  <rect x="30" y="818" width="320" height="104" rx="6" fill="#f7f8fa" stroke="#9aa5b1"/>
+  <text x="46" y="842" font-size="14" font-weight="700" fill="#1f2d3d">backup_restore</text>
+  <text x="46" y="864" font-size="12" fill="#37475a">Runs: backup copies and secret replica only</text>
+  <text x="46" y="884" font-size="12" fill="#37475a">RPO: up to 24 h (daily copy)</text>
+  <text x="46" y="904" font-size="12" fill="#37475a">RTO: hours (rebuild + restore)</text>
+
+  <rect x="370" y="818" width="320" height="104" rx="6" fill="#f7f8fa" stroke="#9aa5b1"/>
+  <text x="386" y="842" font-size="14" font-weight="700" fill="#1f2d3d">pilot_light</text>
+  <text x="386" y="864" font-size="12" fill="#37475a">Runs: Aurora secondary, web tier at 0</text>
+  <text x="386" y="884" font-size="12" fill="#37475a">RPO: seconds</text>
+  <text x="386" y="904" font-size="12" fill="#37475a">RTO: tens of minutes</text>
+
+  <rect x="710" y="818" width="320" height="104" rx="6" fill="#fdf2e9" stroke="#b5651d" stroke-width="2"/>
+  <text x="726" y="842" font-size="14" font-weight="700" fill="#1f2d3d">warm_standby (default)</text>
+  <text x="726" y="864" font-size="12" fill="#37475a">Runs: everything, web tier at 1 instance</text>
+  <text x="726" y="884" font-size="12" fill="#37475a">RPO: seconds</text>
+  <text x="726" y="904" font-size="12" fill="#37475a">RTO: minutes (promote + scale out)</text>
+
+  <rect x="1050" y="818" width="320" height="104" rx="6" fill="#f7f8fa" stroke="#9aa5b1"/>
+  <text x="1066" y="842" font-size="14" font-weight="700" fill="#1f2d3d">multi_site</text>
+  <text x="1066" y="864" font-size="12" fill="#37475a">Runs: full capacity, active-active</text>
+  <text x="1066" y="884" font-size="12" fill="#37475a">RPO: seconds</text>
+  <text x="1066" y="904" font-size="12" fill="#37475a">RTO: near zero for reads</text>
+
+  <text x="1370" y="950" text-anchor="end" font-size="10.5" fill="#7b8794">Route 53 records and HTTPS need hosted_zone_id. Times are indicative until measured with scripts/dr-drill.sh.</text>
+</svg>

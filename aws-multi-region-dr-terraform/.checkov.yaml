@@ -1,0 +1,31 @@
+# Checkov configuration. Every skipped check is an intentional trade-off for a
+# learning / portfolio stack and is explained below and in README "Security".
+# soft-fail: the job reports findings (also to GitHub code scanning) without
+# failing the build. Switch to false once the first report has been triaged.
+framework:
+  - terraform
+  - github_actions
+soft-fail: true
+skip-path:
+  - tests
+skip-check:
+  - CKV_AWS_91    # ALB access logs: would need an extra S3 bucket per region
+  - CKV_AWS_150   # ALB deletion protection: variable, off by default so destroy works
+  - CKV_AWS_2     # HTTP listener: only used without a domain; with a domain HTTP redirects to HTTPS
+  - CKV_AWS_103   # same as above
+  - CKV_AWS_260   # port 80 open to the internet: required for the redirect and Route 53 health checks
+  - CKV_AWS_139   # RDS deletion protection: variable, off by default for demos
+  - CKV_AWS_118   # RDS enhanced monitoring: extra cost
+  - CKV_AWS_353   # Performance Insights: extra cost
+  - CKV_AWS_162   # IAM DB auth: app uses Secrets Manager credentials
+  - CKV2_AWS_57   # secret rotation: Terraform owns the global-cluster password
+  - CKV_AWS_149   # Secrets Manager CMK: AWS-managed key is replicated automatically
+  - CKV_AWS_26    # SNS encryption: EventBridge cannot publish to topics using the AWS-managed SNS key
+  - CKV_AWS_117   # Lambda in VPC: it only calls AWS APIs
+  - CKV_AWS_116   # Lambda DLQ: invocations are retried by SNS and every run is idempotent
+  - CKV_AWS_173   # Lambda env encryption: variables hold identifiers only, no secrets
+  - CKV_AWS_272   # Lambda code signing
+  - CKV_AWS_115   # Lambda reserved concurrency: new accounts have too little concurrency to reserve
+  - CKV_AWS_158   # log group CMK
+  - CKV_AWS_338   # log retention >= 1 year: 90 days is enough for a demo
+  - CKV2_AWS_11   # VPC flow logs: extra cost
