@@ -6,7 +6,7 @@ A Terraform re-implementation of the demo from the talk *"Building a disaster re
 
 ## The scenario in short
 
-A note-taking REST API (create, read, update, delete notes) must survive the loss of an entire AWS region. The talk points out that serverless services are already highly available *inside* a region (multi-AZ), but regions themselves occasionally go down for hours, so the question to ask is whether your customer can tolerate that downtime.
+A note-taking REST API (create, read, update, delete notes) must survive the loss of an entire AWS region. The serverless services are already highly available *inside* a region (multi-AZ), but regions themselves occasionally go down for hours, so the question to ask is whether your customer can tolerate that downtime.
 
 The chosen strategy is **multi-site active/active**. The complete stack — API Gateway, Lambda and a DynamoDB replica — runs in two regions at the same time (us-east-1 and us-east-2) and both serve real traffic. A DynamoDB **global table** replicates every write to the other region in roughly a second. Route 53 publishes one hostname, `api.example.com`, with latency-based alias records pointing at each region; when a region becomes unhealthy, Route 53 stops returning it and all users land on the surviving region. RTO is close to zero and RPO is roughly the replication lag.
 
