@@ -1,6 +1,6 @@
 # Serverless multi-site active/active DR — Terraform edition
 
-A Terraform re-implementation of the demo from the talk *"Building a disaster recovery strategy for serverless applications"* (reference repo: [mjzone/serverless-dr-demo](https://github.com/mjzone/serverless-dr-demo), which uses the Serverless Framework). The same architecture is expressed here as one Terraform configuration that manages two AWS regions.
+A Terraform re-implementation of the demo from the talk *"Building a disaster recovery strategy for serverless applications". 
 
 ![Architecture](docs/architecture.svg)
 
