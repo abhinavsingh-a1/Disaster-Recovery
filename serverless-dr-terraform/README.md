@@ -1,6 +1,6 @@
 # Serverless multi-site active/active DR — Terraform edition
 
-A Terraform re-implementation of the demo from the talk *"Building a disaster recovery strategy for serverless applications". 
+A Terraform re-implementation of the demo *"Building a disaster recovery strategy for serverless applications". 
 
 ![Architecture](docs/architecture.svg)
 
@@ -40,7 +40,7 @@ RTO (recovery time objective) is how long you can be down; RPO (recovery point o
 | Replication lag metric + CloudWatch alarm | `monitoring.tf` — `ReplicationLatency` alarms in both directions |
 | Active/active doesn't stop data corruption → keep backups | Point-in-time recovery enabled on every replica |
 
-Two additions go beyond the talk. First, a `/health` endpoint plus Route 53 HTTPS health checks: an alias record's "evaluate target health" only notices when the API Gateway service itself is impaired, while the health check exercises Lambda *and* the local DynamoDB replica. Second, a `simulate_primary_failure` switch that inverts the primary health check, which gives you a safe, repeatable failover drill (the talk recommends a full failover exercise every month).
+Two additions. First, a `/health` endpoint plus Route 53 HTTPS health checks: an alias record's "evaluate target health" only notices when the API Gateway service itself is impaired, while the health check exercises Lambda *and* the local DynamoDB replica. Second, a `simulate_primary_failure` switch that inverts the primary health check, which gives you a safe, repeatable failover drill (recommends a full failover exercise every month).
 
 ## Project layout
 
@@ -103,6 +103,6 @@ Writing through `primary_invoke_url` and reading through `dr_invoke_url` reprodu
 
 API Gateway, Lambda and DynamoDB on-demand cost nothing while idle, so the second region adds very little. The fixed costs are Route 53 health checks (a few dollars per month for two HTTPS checks), replicated write request units for the global table, and extra storage for the replica and PITR.
 
-## The real-world scenario from the talk (not implemented here)
+## The real-world scenario (not implemented here)
 
-The second half of the talk describes a multi-tenant SaaS quality management system with an RTO of six hours and an RPO of one hour. Because it mixes serverless with containers (Fargate, App Runner), ElastiCache and third-party services, the team chose **pilot light** between eu-west-1 and eu-central-1: CloudFront, API Gateway and Lambda are pre-deployed in the DR region (free while idle), MongoDB Atlas multi-region replication and S3 cross-region replication keep the data live, ElastiCache uses a global datastore, containers sit at desired count zero, all configuration lives in SSM Parameter Store, Cognito users are re-created on first login through a migrate-user Lambda trigger, and a CloudFront origin failover page tells users recovery is in progress. Scaling up is scripted and documented in a runbook. This repository implements only the first, simpler active/active demo; `docs/RUNBOOK.md` borrows the runbook-and-drill discipline from that second scenario.
+A multi-tenant SaaS quality management system with an RTO of six hours and an RPO of one hour. Because it mixes serverless with containers (Fargate, App Runner), ElastiCache and third-party services, the team chose **pilot light** between eu-west-1 and eu-central-1: CloudFront, API Gateway and Lambda are pre-deployed in the DR region (free while idle), MongoDB Atlas multi-region replication and S3 cross-region replication keep the data live, ElastiCache uses a global datastore, containers sit at desired count zero, all configuration lives in SSM Parameter Store, Cognito users are re-created on first login through a migrate-user Lambda trigger, and a CloudFront origin failover page tells users recovery is in progress. Scaling up is scripted and documented in a runbook. This repository implements only the first, simpler active/active demo; `docs/RUNBOOK.md` borrows the runbook-and-drill discipline from that second scenario.
