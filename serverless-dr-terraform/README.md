@@ -23,9 +23,9 @@ This is affordable for serverless because you pay per request rather than for up
 
 RTO (recovery time objective) is how long you can be down; RPO (recovery point objective) is how much data you can afford to lose.
 
-## How the talk maps to this Terraform project
+## Terraform project
 
-| Talk (Serverless Framework / console) | This project |
+| Serverless Framework / console | This project |
 |---|---|
 | Separate `infra` service holding the `AWS::DynamoDB::GlobalTable`, deployed once | `modules/dynamodb-global-table`, instantiated once with the primary provider and a `replica` block for the DR region |
 | DynamoDB Streams with new and old images (required for replication) | `stream_enabled = true`, `stream_view_type = "NEW_AND_OLD_IMAGES"` |
